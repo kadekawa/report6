@@ -9,9 +9,21 @@ import java.util.Map;
  */
 public class Character {
     private int coin = 20;
+    private String mane;
     private ArrayList<Card> hand;
     private boolean continues = true ;
     private int role= 0;
+
+    Character(String _mane){
+        mane = _mane;
+    }
+    public void setMane(String mane) {
+        this.mane = mane;
+    }
+
+    public String getMane() {
+        return mane;
+    }
     //配られたカードを手札に加える
     void addHand(Card i){
         this.hand.add(i);
@@ -33,59 +45,73 @@ public class Character {
         return continues;
     }
 
+    void ready(){
+        hand = new ArrayList<>();
+        continues = true;
+        role = 0;
+    }
     
     //手札と場のカードのスートを確認する
     //戻り値はMap
-    Map checkCSuit(Table table){
+    Map<String,Integer> checkSuit(Table table){
         String[] suits = new String[]{"♡","♢","♤","♧"};
         Map<String,Integer> handSuits =new HashMap<String,Integer>();
-        int i =0;
         for(int suit=0; suit<suits.length;suit++){
-            for(int x=0; x<hand.size(); x++){
-                if (suits[suit].equals(hand.get(x))){
+            int i =0;
+            for(int y=0;y<table.getCards().size();y++){
+                if(suits[suit].equals(table.getCards().get(y).getSuit())){
                     i +=1;
                 }
-                for(int y=0;y<table.getCards().size();y++){
-                    if(suits[suit].equals(table.getCards().get(y))){
-                        i +=1;
-                    }
+            }
+            for(int x=0; x<hand.size(); x++){
+                if (suits[suit].equals(hand.get(x).getSuit())){
+                    i +=1;
                 }
                 handSuits.put(suits[suit],i);
             }
         }return handSuits;
     }
+    //手札を公開する
+    void openHand(){
+        System.out.print(this.mane + "の手札:");
+        for(int i=0;i<hand.size();i++){
+            hand.get(i).getName();
+        }
+        System.out.println("");
+    }
     //自分の手札・場のカードの番号を確認する
     //戻り値はMap
-    Map checkNumber(Table table){
+    Map<String,Integer> checkNumber(Table table){
         String[] numbers = new String[]{"A","2","3","4","5","6","7","8","9","10","J","Q","K"};
         Map<String,Integer> hundNumbers = new HashMap<String,Integer>();
-        int i =0;
         for(int number=0; number<numbers.length;number++){
-            for(int x=0; x<hand.size(); x++){
-                if (numbers[number].equals(hand.get(x))){
+            int i =0;
+            for(int y=0;y<table.getCards().size();y++){
+                if(numbers[number].equals(table.getCards().get(y).getNumber())){
                     i +=1;
                 }
-                for(int y=0;y<table.getCards().size();y++){
-                    if(numbers[number].equals(table.getCards().get(y))){
-                        i +=1;
-                    }
-                }
+            }
+            for(int x=0; x<hand.size(); x++){
+                if (numbers[number].equals(hand.get(x).getNumber())){
+                    i +=1;
+                }    
                 hundNumbers.put(numbers[number],i);
             }
         }return hundNumbers;
     }
     //自分の役を確認する
     //現在　フォーカード・フルハウス・フラッシュ・スリーカード・ワンペアのみ実装
-    int checkRole(Map number, Map suit){
+    // 引数は Map<string,Integer> を二つ（checkSuit
+    int checkRole(Map<String,Integer> number, Map<String,Integer> suit){
         if (number.containsValue(4)){
             role += 700;
         }else if(number.containsValue(2)&&number.containsValue(3)){
             role += 600;
         }else if(suit.containsValue(5)){
             role += 500;
-        }else if(suit.containsValue(3)){
+        }else if(number.containsValue(3)){
             role += 300;
-        }else if (suit.containsValue(2)){
+        }else if (number.containsValue(2)){
             role += 100;
         }
         return role;

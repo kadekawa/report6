@@ -41,11 +41,4 @@ public class Deck {
         return deck.get(i);
     }
 
-    public static void main(String[] args) {
-        Deck test = new Deck();
-        for (int i=0;i<test.getSize();i++){
-            test.getCard(i).getName();
-        }
-    }
-
 }
